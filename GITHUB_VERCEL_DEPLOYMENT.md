@@ -1,10 +1,10 @@
 # Deploy to Vercel via GitHub - Complete Guide
 
-## ✅ Is This Possible?
+## Is This Possible?
 
 **Yes, you can deploy this Flask app on Vercel!** However, there are some important limitations to be aware of:
 
-### ⚠️ Limitations:
+### Limitations:
 1. **Timeout Limits**: 
    - Free/Hobby Plan: 10 seconds per function execution
    - Pro Plan: 60 seconds per function execution
@@ -18,14 +18,14 @@
    - Files stored in `/tmp` are temporary
    - Files may not persist between function invocations
 
-### ✅ What Will Work:
+### What Will Work:
 - Video analysis (getting video info, thumbnails, formats)
 - Small video downloads (under timeout limits)
 - Frontend UI and all static assets
 
 ---
 
-## 🚀 Step-by-Step Deployment Guide
+## Step-by-Step Deployment Guide
 
 ### Step 1: Prepare Your Code for GitHub
 
@@ -110,7 +110,7 @@
 
 ---
 
-## 📋 Required Files Checklist
+##  Required Files Checklist
 
 Make sure these files exist in your repository:
 
@@ -124,7 +124,7 @@ Make sure these files exist in your repository:
 
 ---
 
-## 🔍 Troubleshooting Common Issues
+##  Troubleshooting Common Issues
 
 ### Issue: "Module not found" or "Import error"
 
@@ -174,7 +174,7 @@ Make sure these files exist in your repository:
 
 ---
 
-## 🔄 Updating Your Deployment
+##  Updating Your Deployment
 
 After making changes:
 
@@ -192,7 +192,7 @@ After making changes:
 
 ---
 
-## 📊 Monitoring Your Deployment
+##  Monitoring Your Deployment
 
 1. **View Logs**:
    - Go to your project in Vercel dashboard
@@ -206,7 +206,7 @@ After making changes:
 
 ---
 
-## 💡 Tips for Better Performance
+##  Tips for Better Performance
 
 1. **Optimize for Small Videos**:
    - The app works best with shorter videos
@@ -223,7 +223,7 @@ After making changes:
 
 ---
 
-## ✅ Summary
+##  Summary
 
 **Yes, you can deploy this on Vercel via GitHub!**
 
