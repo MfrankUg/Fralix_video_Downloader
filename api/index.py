@@ -1,20 +1,32 @@
-from flask import Flask, render_template, request, jsonify, send_file
-from flask_cors import CORS
-import yt_dlp
 import os
 import re
 import tempfile
-from urllib.parse import urlparse, parse_qs
 import logging
+from urllib.parse import urlparse, parse_qs
 
-app = Flask(__name__, 
-            static_folder='../static',
-            template_folder='../templates')
-CORS(app)
-
-# Configure logging
+# Configure logging first
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+try:
+    from flask import Flask, render_template, request, jsonify, send_file
+    from flask_cors import CORS
+    import yt_dlp
+    logger.info("All imports successful")
+except ImportError as e:
+    logger.error(f"Import error: {str(e)}")
+    raise
+
+# Get the directory where this file is located
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+
+app = Flask(__name__, 
+            static_folder=os.path.join(PROJECT_ROOT, 'static'),
+            template_folder=os.path.join(PROJECT_ROOT, 'templates'))
+CORS(app)
+
+# Logging already configured above
 
 # Use /tmp for downloads in Vercel (only writable directory)
 DOWNLOADS_DIR = os.path.join(tempfile.gettempdir(), 'downloads')
@@ -76,7 +88,16 @@ def get_video_info(url, platform):
 @app.route('/')
 def index():
     """Render the main page"""
-    return render_template('index.html')
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        logger.error(f"Error rendering template: {str(e)}")
+        return f"Error loading page: {str(e)}", 500
+
+@app.route('/health')
+def health():
+    """Health check endpoint"""
+    return jsonify({'status': 'ok', 'message': 'Server is running'}), 200
 
 
 @app.route('/api/analyze', methods=['POST'])
@@ -163,6 +184,6 @@ def download_file(filename):
 
 
 # Vercel serverless function handler
-# Export the Flask app for Vercel
+# Export the Flask app - Vercel Python runtime will use this
 handler = app
 
