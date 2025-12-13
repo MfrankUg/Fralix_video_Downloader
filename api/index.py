@@ -141,6 +141,30 @@ def health():
     """Health check endpoint"""
     return jsonify({'status': 'ok', 'message': 'Server is running'}), 200
 
+@app.route('/debug')
+def debug():
+    """Debug endpoint to check system status"""
+    try:
+        static_path = os.path.join(PROJECT_ROOT, 'static')
+        template_path = os.path.join(PROJECT_ROOT, 'templates')
+        
+        return jsonify({
+            'status': 'ok',
+            'base_dir': BASE_DIR,
+            'project_root': PROJECT_ROOT,
+            'static_exists': os.path.exists(static_path),
+            'template_exists': os.path.exists(template_path),
+            'static_path': static_path,
+            'template_path': template_path,
+            'yt_dlp_loaded': yt_dlp is not None,
+            'flask_loaded': 'Flask' in globals(),
+            'downloads_dir': DOWNLOADS_DIR,
+            'downloads_dir_exists': os.path.exists(DOWNLOADS_DIR)
+        })
+    except Exception as e:
+        logger.error(f"Debug endpoint error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/api/analyze', methods=['POST'])
 def analyze_video():
