@@ -5,11 +5,11 @@ A modern, fast, and user-centered video downloader web application that enables 
 ## Features
 
 - 🎥 **Multi-Platform Support**: Download videos from YouTube, LinkedIn, X (Twitter), and Instagram
-- ⚡ **Fast Processing**: Lightning-fast downloads with optimized processing
-- 🎨 **Modern UI/UX**: Clean, professional design with smooth animations
-- 📱 **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
-- 🔒 **Secure & Private**: No data collection, no tracking, just downloads
-- 🎯 **Format Selection**: Choose your preferred video quality and format
+-  **Fast Processing**: Lightning-fast downloads with optimized processing
+- **Modern UI/UX**: Clean, professional design with smooth animations
+- **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
+- **Secure & Private**: No data collection, no tracking, just downloads
+- **Format Selection**: Choose your preferred video quality and format
 
 ## Installation
 

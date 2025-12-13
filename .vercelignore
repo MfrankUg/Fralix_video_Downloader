@@ -1,0 +1,15 @@
+downloads/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+*.log
+.DS_Store
+main.py
+.git/
+.gitignore
+
