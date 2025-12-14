@@ -38,10 +38,28 @@ def detect_platform(url):
 def get_video_info(url, platform):
     """Get video information without downloading"""
     try:
+        # Configure yt-dlp options to bypass YouTube bot detection
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
             'extract_flat': False,
+            # Bypass YouTube bot detection
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'referer': 'https://www.youtube.com/',
+            'extractor_args': {
+                'youtube': {
+                    'skip': ['dash', 'hls'],  # Skip formats that might trigger bot detection
+                }
+            },
+            # Additional options to appear more like a browser
+            'http_headers': {
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'en-us,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate',
+                'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+                'Keep-Alive': '300',
+                'Connection': 'keep-alive',
+            },
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -67,7 +85,17 @@ def get_video_info(url, platform):
                 'platform': platform
             }
     except Exception as e:
-        logger.error(f"Error getting video info: {str(e)}")
+        error_msg = str(e)
+        logger.error(f"Error getting video info: {error_msg}")
+        
+        # Check for YouTube bot detection error
+        if 'bot' in error_msg.lower() or 'cookies' in error_msg.lower() or 'Sign in to confirm' in error_msg:
+            # Return user-friendly error message
+            raise Exception(
+                "YouTube is temporarily blocking automated access. "
+                "This is a known issue with YouTube's bot detection. "
+                "Please try again in a few minutes, or the video may require authentication."
+            )
         raise
 
 
@@ -95,8 +123,16 @@ def analyze_video():
         return jsonify(video_info)
         
     except Exception as e:
-        logger.error(f"Error analyzing video: {str(e)}")
-        return jsonify({'error': f'Failed to analyze video: {str(e)}'}), 500
+        error_msg = str(e)
+        logger.error(f"Error analyzing video: {error_msg}")
+        
+        # Check for YouTube bot detection error
+        if 'bot' in error_msg.lower() or 'cookies' in error_msg.lower() or 'Sign in to confirm' in error_msg:
+            return jsonify({
+                'error': 'YouTube is temporarily blocking automated access. Please try again in a few minutes.'
+            }), 503  # Service Unavailable
+        
+        return jsonify({'error': f'Failed to analyze video: {error_msg}'}), 500
 
 
 @app.route('/api/download', methods=['POST'])
@@ -114,11 +150,28 @@ def download_video():
         if platform == 'unknown':
             return jsonify({'error': 'Unsupported platform'}), 400
         
-        # Configure download options
+        # Configure download options with bot detection bypass
         ydl_opts = {
             'format': format_id if format_id != 'best' else 'best[ext=mp4]/best',
             'outtmpl': os.path.join(DOWNLOADS_DIR, '%(title)s.%(ext)s'),
             'quiet': False,
+            # Bypass YouTube bot detection
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'referer': 'https://www.youtube.com/',
+            'extractor_args': {
+                'youtube': {
+                    'skip': ['dash', 'hls'],
+                }
+            },
+            # Additional options to appear more like a browser
+            'http_headers': {
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'en-us,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate',
+                'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+                'Keep-Alive': '300',
+                'Connection': 'keep-alive',
+            },
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -142,8 +195,16 @@ def download_video():
                 return jsonify({'error': 'Download failed - file not found'}), 500
                 
     except Exception as e:
-        logger.error(f"Error downloading video: {str(e)}")
-        return jsonify({'error': f'Download failed: {str(e)}'}), 500
+        error_msg = str(e)
+        logger.error(f"Error downloading video: {error_msg}")
+        
+        # Check for YouTube bot detection error
+        if 'bot' in error_msg.lower() or 'cookies' in error_msg.lower() or 'Sign in to confirm' in error_msg:
+            return jsonify({
+                'error': 'YouTube is temporarily blocking automated access. Please try again in a few minutes.'
+            }), 503  # Service Unavailable
+        
+        return jsonify({'error': f'Download failed: {error_msg}'}), 500
 
 
 @app.route('/api/download-file/<filename>')
